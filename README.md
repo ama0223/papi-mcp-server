@@ -46,7 +46,7 @@ This compiles the TypeScript source code to JavaScript in the `build/` directory
 The MCP Inspector provides a web interface to test your server:
 
 ```bash
-npx @modelcontextprotocol/inspector node build/index.js
+SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" npx @modelcontextprotocol/inspector node build/index.js
 ```
 
 This will:
@@ -122,7 +122,7 @@ tsconfig.json       # TypeScript configuration
 
 1. Edit the TypeScript source in `src/index.ts`
 2. Rebuild the project: `npm run build`
-3. Test with the inspector: `npx @modelcontextprotocol/inspector node build/index.js`
+3. Test with the inspector: `SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" npx @modelcontextprotocol/inspector node build/index.js`
 4. Restart Claude Desktop to use the updated server
 
 ## Troubleshooting
@@ -143,7 +143,7 @@ If you get "PORT IS IN USE" errors:
 pkill -f "inspector"
 
 # Wait a moment, then try again
-npx @modelcontextprotocol/inspector node build/index.js
+SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" npx @modelcontextprotocol/inspector node build/index.js
 ```
 
 ### Build Errors
