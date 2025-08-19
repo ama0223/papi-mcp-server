@@ -1,0 +1,30 @@
+#In the root catalog-info.yaml file we will define the top level systems and the location of the catalog-info.yaml files
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: segment-mcp-server
+  description: 
+  annotations:
+    github.com/project-slug: segmentio/segment-mcp-server
+    buildkite.com/project-slug: segment/segment-mcp-server
+    segment.io/security-tier: "0"
+    twilio.com/eu-available: "true"
+    twilio.com/sla-impacting: "false"
+    twilio.com/data-classification: restricted
+    twilio.com/in-scope-gdpr: "false"
+    twilio.com/in-scope-bcr: "false"
+    twilio.com/in-scope-hipaa: "false"
+    twilio.com/in-scope-sox: "false"
+    twilio.com/in-scope-soc2: "false"
+    twilio.com/in-scope-pci: "false"
+    twilio.com/in-scope-iso: "false"
+spec:
+  # owner: prodobs
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: segment-mcp-server-catalog
+spec:
+  targets:
+    - ./.backstage/segment-mcp-server.catalog-info.yaml

@@ -1,0 +1,18 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: segment-mcp-server
+  description: MCP for Segment's API and other public facing APIs
+  annotations:
+    github.com/project-slug: segmentio/segment-mcp-server
+    buildkite.com/project-slug: segment/segment-mcp-server
+    segment.io/security-tier: "0" # See: https://segment.atlassian.net/wiki/spaces/SEGINFRA/pages/2156102407/Twilio+Security+Tiers+SecTiers
+    backstage.io/kubernetes-id: segment-mcp-server
+    backstage.io/kubernetes-namespace: default
+  links:
+    - title: CI
+      url: https://buildkite.com/segment/segment-mcp-server
+spec:
+  type: service
+  # owner:
+  lifecycle: experimental  # Changed from production to experimental for testing
