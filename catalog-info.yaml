@@ -19,7 +19,7 @@ metadata:
     twilio.com/in-scope-pci: "false"
     twilio.com/in-scope-iso: "false"
 spec:
-  # owner: prodobs
+  # owner: 
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Location
