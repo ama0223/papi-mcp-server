@@ -5,6 +5,9 @@
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from 'express';
+import bodyParser from 'body-parser';
 
 // Import Schemas and Types from /types subpath with .js extension
 import {
@@ -46,7 +49,7 @@ apiClient.interceptors.request.use((config) => {
 });
 
 // --- Server Instance ---
-const server = new Server(
+const mcpServer = new Server(
   {
     name: SERVER_NAME,
     version: SERVER_VERSION
@@ -8678,7 +8681,7 @@ The rate limit for this endpoint is 2 requests per minute, which is lower than t
 // --- Request Handlers ---
 
 // 1. List Available Tools Handler
-server.setRequestHandler(ListToolsRequestSchema, async () => {
+mcpServer.setRequestHandler(ListToolsRequestSchema, async () => {
   return {
     tools: toolsList,
   };
@@ -8686,7 +8689,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
 
 // 2. Call Tool Handler
 // Corrected: Added explicit type for 'request' parameter
-server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest): Promise<CallToolResult> => {
+mcpServer.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest): Promise<CallToolResult> => {
   const { name: toolName, arguments: toolArgs } = request.params;
 
   const toolDefinition = toolsList.find(t => t.name === toolName);
@@ -22918,16 +22921,64 @@ server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest)
 });
 
 
-// --- Main Execution Function ---
+// --- Main Execution Function (stdio) ---
 async function main() {
   try {
-    const transport = new StdioServerTransport();
-    await server.connect(transport);
+    const stdioTransport = new StdioServerTransport();
+
+    await mcpServer.connect(stdioTransport);
     console.error(`${SERVER_NAME} MCP Server (v${SERVER_VERSION}) running on stdio${API_BASE_URL ? `, proxying API at ${API_BASE_URL}` : ''}`);
   } catch (error) {
     console.error("Error during server startup:", error);
     process.exit(1);
   }
+}
+
+async function httpServer() {
+    // Streamable HTTP transport method
+    const streamableHttpTransport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined // run stateless mode
+    });
+    // Create Express app
+    const app = express();
+    // Middleware
+    app.use(bodyParser.json());
+
+    // MCP endpoint
+    app.post('/mcp', async (req, res) => {
+      try {
+        // Create a streamable HTTP transport for this specific request
+        const streamableHttpTransport = new StreamableHTTPServerTransport({
+        sessionIdGenerator: undefined, // run stateless mode
+        });
+
+        res.on("close", () => {
+            console.error("Request closed")
+        })
+
+        await mcpServer.connect(streamableHttpTransport);
+
+        await streamableHttpTransport.handleRequest(req, res, req.body);
+      } catch (error) {
+        console.error("Error handling MCP request:", error)
+        // Header sent to comply with JSON rpc spec: https://www.jsonrpc.org/specification#error_object
+        if (!res.headersSent) {
+          res.status(500).json({
+            jsonrpc: "2.0",
+            error: {
+              code: -32603,
+              message: "INternal server error"
+            }
+          })
+        }
+      }
+    });
+
+    // Start Express server
+    const port = process.env.PORT || 8000;
+    app.listen(port, () => {
+      console.log(`MCP server running on port ${port}`);
+    });
 }
 
 // --- Cleanup Function ---
@@ -22941,10 +22992,15 @@ process.on('SIGINT', cleanup);
 process.on('SIGTERM', cleanup);
 
 // --- Start the Server ---
+console.error('Starting stdio transport...')
 main().catch((error) => {
   console.error("Fatal error in main execution:", error);
   process.exit(1);
 });
+
+ // Initialize the express server
+console.error('Starting the Streamable HTTP transport...')
+httpServer().catch(console.error);
 
 // --- Helper Functions (Included in the generated server code) ---
 function formatApiError(error: AxiosError): string {

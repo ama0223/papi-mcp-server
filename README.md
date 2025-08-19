@@ -55,6 +55,32 @@ This will:
 - Launch a web interface (usually at `http://localhost:6274`)
 - Allow you to test individual tools and see all available Segment API endpoints
 
+### Run the Streamable HTTP server
+
+If your build of src/index.ts starts an Express HTTP server (streamable HTTP transport or a custom HTTP endpoint), run the compiled server directly:
+
+1. Build the project
+```bash
+npm run build
+```
+
+2. Start the server (temporary env var for this run)
+```bash
+SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" npm start
+# or
+SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" node build/index.js
+```
+
+3. Open the server in your browser
+- The server will log the listening address/port when it starts. Default port used in examples is `8000`, so try:
+  - http://localhost:8000/mcp
+- If no port appears in the logs, check src/index.ts for the configured port or the "streamableHttp" host/port printed at startup.
+
+...existing code...
+```// filepath: /Users/jairaviles/dev/src/github.com/segmentio/papi-mcp-server/README.md
+...existing code...
+
+
 ## Installing in Claude Desktop
 
 ### 1. Locate Claude's Configuration File
