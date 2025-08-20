@@ -76,11 +76,6 @@ SEGMENT_API_TOKEN="YOUR_PAPI_TOKEN" node build/index.js
   - http://localhost:8000/mcp
 - If no port appears in the logs, check src/index.ts for the configured port or the "streamableHttp" host/port printed at startup.
 
-...existing code...
-```// filepath: /Users/jairaviles/dev/src/github.com/segmentio/papi-mcp-server/README.md
-...existing code...
-
-
 ## Installing in Claude Desktop
 
 ### 1. Locate Claude's Configuration File

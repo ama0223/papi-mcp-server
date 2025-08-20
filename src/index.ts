@@ -22944,6 +22944,11 @@ async function httpServer() {
     // Middleware
     app.use(bodyParser.json());
 
+    // Return a 200 from get /
+    app.get('/', (_, res) => {
+      res.status(200).send('MCP Server is running');
+    });
+
     // MCP endpoint
     app.post('/mcp', async (req, res) => {
       try {
