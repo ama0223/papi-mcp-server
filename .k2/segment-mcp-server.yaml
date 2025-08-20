@@ -1,0 +1,35 @@
+apiVersion: platform.segment.com/v1beta1
+kind: SegmentApplication
+cell: core
+metadata:
+  name: segment-mcp-server
+spec:
+  targets:
+    - name: stage-usw2
+      cluster: stage:us-west-2:control-plane
+      replicatedService:
+        iamRoleName: segment-mcp-server
+        replicas: 1
+        mainContainers:
+          - name: segment-mcp-server
+            imageName: papi-mcp-server
+            imageRegistry: 528451384384.dkr.ecr.us-west-2.amazonaws.com
+            command:
+              - node
+            args:
+              - build/index.js
+            resources:
+              requests:
+                cpu: 0.1
+                memory: 300Mi
+              limits:
+                cpu: 0.5
+                memory: 600Mi
+            ports:
+              - name: http
+                containerPort: 3000
+            ctlstore:
+              disabled: false
+        terminationGracePeriodSeconds: 60
+        ingress:
+          enabled: true
