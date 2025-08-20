@@ -1,0 +1,17 @@
+apiVersion: platform.segment.com/v1beta1
+kind: ShipwrightPlan
+metadata:
+  name: segment-mcp-server
+spec:
+  appName: segment-mcp-server
+  repository: https://github.com/segmentio/papi-mcp-server
+  k2FileName: ../.k2/segment-mcp-server.yaml
+  groups:
+    - name: stage
+      order: 1
+      targets:
+        - name: stage-usw2
+          manualApproval: false
+      trigger:
+        branches:
+          - .*
