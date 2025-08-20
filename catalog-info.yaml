@@ -1,9 +1,8 @@
-#In the root catalog-info.yaml file we will define the top level systems and the location of the catalog-info.yaml files
 apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   name: segment-mcp-server
-  description: 
+  description: MCP Server system for Segment's Public API access
   annotations:
     github.com/project-slug: segmentio/segment-mcp-server
     buildkite.com/project-slug: segment/segment-mcp-server
@@ -18,13 +17,24 @@ metadata:
     twilio.com/in-scope-soc2: "false"
     twilio.com/in-scope-pci: "false"
     twilio.com/in-scope-iso: "false"
-spec:
-  # owner: 
 ---
 apiVersion: backstage.io/v1alpha1
-kind: Location
+kind: Component
 metadata:
-  name: segment-mcp-server-catalog
+  name: segment-mcp-server
+  description: MCP for Segment's API and other public facing APIs
+  annotations:
+    github.com/project-slug: segmentio/segment-mcp-server
+    buildkite.com/project-slug: segment/segment-mcp-server
+    segment.io/security-tier: "0" # See: https://segment.atlassian.net/wiki/spaces/SEGINFRA/pages/2156102407/Twilio+Security+Tiers+SecTiers
+    backstage.io/kubernetes-id: segment-mcp-server
+    backstage.io/kubernetes-namespace: default
+  links:
+    - title: CI
+      url: https://buildkite.com/segment/segment-mcp-server
 spec:
-  targets:
-    - ./.backstage/segment-mcp-server.catalog-info.yaml
+  type: service
+  # owner: 
+  system: segment-mcp-server
+  lifecycle: experimental
+
