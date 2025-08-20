@@ -22982,7 +22982,6 @@ async function httpServer() {
     // Start Express server
     const port = process.env.PORT || 8000;
     app.listen(port, () => {
-      console.log(`MCP server running on port ${port}`);
     });
 }
 
